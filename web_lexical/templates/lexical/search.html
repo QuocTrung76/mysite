@@ -1,0 +1,215 @@
+{% extends "lexical/index.html" %}
+{% load static %}
+{% block static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'lexical/search.css' %}">
+{% endblock static %}
+
+{% block sidebar %}
+<div id="sidebar">
+    <header>
+    <a href="{% url 'lexical:index' %}">My App</a>
+    </header>
+    <ul class="nav">
+    <li>
+        <a href="{% url 'lexical:add_dict' %}">
+        <i class="zmdi zmdi-view-dashboard"></i> Dictionary
+        </a>
+    </li>
+    </ul>
+</div>
+{% endblock sidebar %}
+{% block content %}
+<div id="search-box">
+    <form id="search-vocalburaly" name="search-form" oninput="return validateForm()">
+        <div style="flex-direction: row; display: flex; width: 100%; height: 15%; justify-content: center; align-items: center; margin-top: 4px;">
+            <div id="middle" style="height: fit-content; width: 70%; max-width: 450px; height: 80%;">
+                <input type="text" name="word" class='form-control' id='word' autocomplete="off">
+            </div>
+            <div id="search-box-button" style="height: 80%;">
+                <button type="submit" id="search">
+                    <i class="fa fa-search"></i>
+                </button>
+            </div>
+            <br>
+        </div>
+        <div id="translate-box"">
+            <div class="modal-body" id="translate-content">
+            </div>
+        </div>
+        <div id="add-box">
+            <button type="submit" id="add" onclick="return addWord()">
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+                Add to dictionary ->
+            </button>
+            <div style="background: transparent; width: 30%; display: flex; justify-content: center;">
+                <select name="table" id="table" onchange="return getSelect()">
+                    {% for table in tables %}
+                        <option class="short" data-limit='12' value="{{table.tableName}}">{{table.tableName}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+    </form>
+    <br>
+    <!-- <div style="width:100%">
+        <div id="container-link">
+            <a id="add-dict-link" href="{% url 'lexical:add_dict' %}">Your Dict</a>
+        </div>
+    </div> -->
+</div>
+<div id="table-box">
+    <div id="table-box-text">
+        <div id="table-box-header">
+            <h4 id="word-header">WORDS LIST</h4>
+        </div>
+        <div id="table-box-words">
+                <form class="search-list" id="search-vocalburaly-from-list" name="search-form" oninput="return validateForm()">
+                    <ul id="words-list"></ul>
+                </form>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block script %}
+<script>
+    var url_search = "{% url 'lexical:search' %}"
+    var command = ""
+    var setNewWordList = {}
+    var wordFromList = ""
+    {% for table in tables %}
+        setNewWordList['{{table}}'] = []
+        {% for word in table.word.all %}
+            setNewWordList['{{table}}'].push('{{word}}')
+        {% endfor %}
+        setNewWordList['{{table}}'].sort()
+    {% endfor %}
+    function validateForm() {
+        var x = document.forms["search-form"]["word"].value;
+        setNewWordList[document.getElementById("table").value].forEach(element => {
+            var element_word = element + "-word"
+            document.getElementById(element_word).removeAttribute('style', 'color');
+            document.getElementById(element_word).setAttribute('style', 'color:blue !important');
+        });
+        if (x == "") {
+            
+            const old_elem = document.getElementById("translate-content-text")
+            if (old_elem) {
+                old_elem.innerHTML = '';
+                old_elem.remove();
+            }
+        }
+    }
+    function addWord() {
+        command = "Add"
+    }
+
+    function shortString(selector) {
+        const elements = document.querySelectorAll(selector);
+        const tail = '...';
+        if (elements && elements.length) {
+            for (const element of elements) {
+                let text = element.innerText;
+                if (element.hasAttribute('data-limit')) {
+                    if (text.length > element.dataset.limit) {
+                        element.innerText = `${text.substring(0, element.dataset.limit - tail.length).trim()}${tail}`;
+                    }
+                } else {
+                    throw Error('Cannot find attribute \'data-limit\'');
+                }
+            }
+        }
+    }
+
+    window.onload = function() {
+        shortString('.short');
+    };
+
+    function append_element(elemType, elemId, elemContent, parentElem) {
+        const element = document.createElement(elemType);
+        if (elemId) {
+            element.id = elemId
+        }
+        const node = document.createTextNode(elemContent);
+        if (elemContent) {
+            element.appendChild(node);
+        }
+        parentElem.appendChild(element)
+    }
+
+    function getSelect() {
+        var mySelect = document.getElementById("table")
+        var oldWord = document.getElementById("words-list")
+        
+        oldWord.innerHTML = ""
+
+        {% for table in tables %}
+            if ('{{table}}' == mySelect.value) {
+                for (let i = 0; i < setNewWordList['{{table}}'].length; i++) {
+                    append_element(
+                        elemType='li',
+                        elemId=setNewWordList['{{table}}'][i],
+                        elemContent="",
+                        oldWord
+                    )
+                    let parent_li = document.getElementById(setNewWordList['{{table}}'][i])
+                    word_id = setNewWordList['{{table}}'][i] + "-word"
+                    append_element(
+                        elemType='button',
+                        elemId=word_id,
+                        elemContent=setNewWordList['{{table}}'][i],
+                        parent_li
+                    )
+                    word_button = document.getElementById(word_id)
+                    word_button.setAttribute('type', 'button')
+                    word_button.setAttribute('value', setNewWordList['{{table}}'][i])
+                }
+            }
+        {% endfor %}
+
+    }
+
+    var mySelect = document.getElementById("table")
+    var oldWord = document.getElementById("words-list")
+    {% for table in tables %}
+        if ('{{table}}' == mySelect.value) {
+            for (let i = 0; i < setNewWordList['{{table}}'].length; i++) {
+                append_element(
+                    elemType='li',
+                    elemId=setNewWordList['{{table}}'][i],
+                    elemContent="",
+                    oldWord
+                )
+                let parent_li = document.getElementById(setNewWordList['{{table}}'][i])
+                word_id = setNewWordList['{{table}}'][i] + "-word"
+                append_element(
+                    elemType='button',
+                    elemId=word_id,
+                    elemContent=setNewWordList['{{table}}'][i],
+                    parent_li
+                )
+                word_button = document.getElementById(word_id)
+                word_button.setAttribute('type', 'button')
+                word_button.setAttribute('value', setNewWordList['{{table}}'][i])
+            }
+        }
+    {% endfor %}
+
+    $("#words-list").on("click", "button", function(){
+            setNewWordList[document.getElementById("table").value].forEach(element => {
+                var element_word = element + "-word"
+                document.getElementById(element_word).removeAttribute('style', 'color');
+                document.getElementById(element_word).setAttribute('style', 'color:blue !important');
+            });
+            $(this).css("color", "silver");
+            wordFromList = $(this).attr("value");
+            document.getElementById("word").value = wordFromList;
+        }
+    );
+
+</script>
+<script type="text/javascript" src="{% static 'js/base.js' %}"></script>
+{% endblock script %}

@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% load static %}
+{% block static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'lexical/index.css' %}">
+{% endblock static %}
+
+{% block content %}
+    
+<div id="login-box">
+    <form id="login-form">
+        {% csrf_token %}
+        <div id="input-box">
+            <div id="username-input">
+                <label for="username">USERNAME:</label>
+                <input type="text" name="username" class='form-control' id="username"  autocomplete="off">
+            </div>
+            <div id="password-input">
+                <label for="password">PASSWORD:</label>
+                <input type="text" name="password" class='form-control' id="password"  autocomplete="off">
+            </div>
+        </div>
+        <div id="submit-box">
+            <button type="submit" id="submit-login-button">LOGIN</button>
+        </div>
+    </form>
+</div>
+
+{% endblock content %}
+
+{% block script %}
+<script>
+    var login_url = "{% url 'lexical:index' %}"
+    var url_status = "{% url 'lexical:search' %}"
+</script>
+<script type="text/javascript" src="{% static 'js/lexical/index.js' %}"></script>
+{% endblock script %}

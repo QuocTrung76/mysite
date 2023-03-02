@@ -1,0 +1,96 @@
+@media (min-width: 1025px) {
+    .h-custom {
+        height: 100vh !important;
+    }
+}
+
+/* @media (max-width: 600px) {
+    #main-container {
+        flex-direction: column;
+        justify-content: space-around;
+    }
+}
+
+@media (min-width: 600px) {
+    #main-container {
+        justify-content: space-between;
+    }
+} */
+
+@import url('https://fonts.googleapis.com/css?family=Roboto:300,400,400i,500');
+
+body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    overflow-x: hidden;
+    font-family: 'Roboto', sans-serif;
+}
+
+.collapsing {
+    -webkit-transition: height .01s ease;
+    transition: height .01s ease
+  }
+
+  #sidebar {
+    z-index: 1000;
+    position: fixed;
+    width: 15%;
+    height: 100%;
+    overflow-y: auto;
+    background: rgb(147,112,219, 0.8);
+    -webkit-transition: all 0.5s ease;
+    -moz-transition: all 0.5s ease;
+    -o-transition: all 0.5s ease;
+    transition: all 0.5s ease;
+  }
+
+  #sidebar header {
+    background-color: indigo;
+    font-size: 25px;
+    line-height: 52px;
+    text-align: center;
+  }
+  
+  #sidebar header a {
+    color: #fff;
+    display: block;
+    text-decoration: none;
+    font-size: 25px;
+  }
+  
+  #sidebar header a:hover {
+    color: #fff;
+  }
+  
+  #sidebar .nav{
+    flex-direction: column;
+  }
+  
+  #sidebar .nav a{
+    background: none;
+    border-bottom: 1px solid #455A64;
+    color: #fff;
+    font-size: 25px;
+    padding: 16px 24px;
+  }
+  
+  #sidebar .nav a:hover{
+    background: none;
+    color: #ECEFF1;
+  }
+  
+  #sidebar .nav a i{
+    margin-right: 16px;
+  }
+
+#main-container {
+    height: 100%;
+    align-items: center;
+    background-image: url('images/background4.jpeg');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 100% 100%;
+}
+
+

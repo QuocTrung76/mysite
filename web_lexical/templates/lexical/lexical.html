@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% load static %}
+{% block static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'lexical/lexical.css' %}">
+{% endblock static %}
+{% block content %}
+<div id="table-box">
+    <h1>Hello world</h1>
+</div>
+{% endblock content %}
+
+{% block script %}
+<script>
+    var url_lexical = "{% url 'lexical:add_dict' %}"
+</script>
+<script type="text/javascript" src="{% static 'js/lexical/lexical.js' %}"></script>
+{% endblock script %}
